@@ -3798,10 +3798,27 @@ function toggleGalleryMode() {
 }
 
 function renderGalleryCard(asset) {
-  // Extract keyword from title for image search
-  var kw = asset.title.split(' — ')[0].replace(/[·\s]/g,'-');
-  var imgUrl = 'https://images.pexels.com/photos/random/?q=' + encodeURIComponent(kw) + '&w=600&h=450&fit=crop';
-  return '<article class="gallery-card"><img class="gallery-card__img" src="' + imgUrl + '" alt="' + asset.title + '" loading="lazy" onerror="this.parentElement.style.display=\'none\'"><div class="gallery-card__info"><span class="gallery-card__title">' + asset.title + '</span><button class="gallery-card__copy" onclick="event.stopPropagation();copyImageUrl(\'' + imgUrl + '\')">📋 复制链接</button></div></article>';
+  var kw = asset.title.split(' — ')[0];
+  var encoded = encodeURIComponent(kw);
+  var p = asset.palette;
+  var grad = 'linear-gradient(135deg,' + p.join(',') + ')';
+  // Use multiple fallback image sources
+  var imgUrl = 'https://source.unsplash.com/600x450/?' + encoded;
+  var fallbackUrl = 'https://loremflickr.com/600/450/' + encoded.replace(/%20/g,',');
+  var svgBg = encodeURIComponent('<svg xmlns="http://www.w3.org/2000/svg" width="600" height="450"><defs><linearGradient id="g" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stop-color="'+p[0]+'"/><stop offset="25%" stop-color="'+p[1]+'"/><stop offset="50%" stop-color="'+p[2]+'"/><stop offset="75%" stop-color="'+p[3]+'"/><stop offset="100%" stop-color="'+p[4]+'"/></linearGradient></defs><rect width="600" height="450" fill="url(#g)"/><text x="300" y="225" text-anchor="middle" fill="rgba(255,255,255,0.7)" font-family="sans-serif" font-size="20" font-weight="bold">'+kw+'</text></svg>');
+  var svgUrl = 'data:image/svg+xml,' + svgBg;
+
+  return '<article class="gallery-card">' +
+    '<div style="position:relative;overflow:hidden;">' +
+    '<img class="gallery-card__img" src="' + imgUrl + '" alt="' + asset.title + '" loading="lazy" ' +
+    'onerror="var s=this;if(!s.dataset.tried){s.dataset.tried=1;s.src=\'' + fallbackUrl + '\';}else{s.style.display=\'none\';s.nextElementSibling.style.display=\'flex\';}" ' +
+    'style="min-height:200px;width:100%;display:block;object-fit:cover;">' +
+    '<div style="display:none;min-height:200px;width:100%;align-items:center;justify-content:center;background:' + grad + ';flex-direction:column;gap:8px;">' +
+    '<span style="font-size:32px;">🖼️</span>' +
+    '<span style="font-family:var(--font-display);font-size:14px;font-weight:700;color:rgba(255,255,255,0.85);text-align:center;padding:0 16px;">' + kw + '</span>' +
+    '<span style="font-size:11px;color:rgba(255,255,255,0.6);">图片加载中…</span>' +
+    '</div></div>' +
+    '<div class="gallery-card__info"><span class="gallery-card__title">' + asset.title + '</span><button class="gallery-card__copy" onclick="event.stopPropagation();copyImageUrl(\'' + svgUrl + '\')">📋 复制色卡</button></div></article>';
 }
 
 function copyImageUrl(url) {
