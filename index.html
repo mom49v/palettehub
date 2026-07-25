@@ -3829,8 +3829,8 @@ function toggleGalleryMode() {
 
 function renderGalleryCard(asset) {
   var kw = asset.title.split(' — ')[0];
-  var encoded = encodeURIComponent(kw);
   var p = asset.palette;
+  var grad = 'linear-gradient(135deg,' + p.join(',') + ')';
 
   // Build palette swatches with HEX and RGB
   var paletteHtml = '';
@@ -3843,25 +3843,237 @@ function renderGalleryCard(asset) {
       '</div>';
   }
 
-  // Reliable image sources
-  var imgUrl = 'https://source.unsplash.com/600x450/?' + encoded;
-  var fallbackUrl = 'https://loremflickr.com/600/450/' + encoded.replace(/%20/g,',');
+  // Generate a beautiful SVG illustration based on palette
+  var svgArt = generateSvgArt(kw, p);
 
   return '<article class="gallery-card">' +
     '<div class="gallery-card__header">' +
     '<div class="gallery-card__brand">COLOR</div>' +
     '<div class="gallery-card__title">'+kw+' 配色</div>' +
     '</div>' +
-    '<div class="gallery-card__image-wrap">' +
-    '<img class="gallery-card__img" src="' + imgUrl + '" alt="' + asset.title + '" loading="lazy" ' +
-    'onerror="var s=this;if(!s.dataset.tried){s.dataset.tried=1;s.src=\'' + fallbackUrl + '\';}else{s.nextElementSibling.style.display=\'flex\';s.style.display=\'none\';}">' +
-    '<div style="display:none;position:absolute;inset:0;align-items:center;justify-content:center;background:linear-gradient(135deg,'+p.join(',')+');flex-direction:column;gap:8px;">' +
-    '<span style="font-size:32px;">🎨</span>' +
-    '<span style="font-family:var(--font-display);font-size:14px;font-weight:700;color:rgba(255,255,255,0.9);text-align:center;padding:0 16px;">'+kw+'</span>' +
-    '</div></div>' +
+    '<div class="gallery-card__image-wrap" style="background:'+grad+';min-height:260px;display:flex;align-items:center;justify-content:center;">' +
+    svgArt +
+    '</div>' +
     '<div class="gallery-card__palette">'+paletteHtml+'</div>' +
     '<button class="gallery-card__copy" onclick="event.stopPropagation();showToast(\'截图保存即可 📸\')">📸 截图保存</button>' +
     '</article>';
+}
+
+// Generate beautiful SVG art based on theme and palette
+function generateSvgArt(theme, colors) {
+  var t = theme.toLowerCase();
+  var c0 = colors[0], c1 = colors[1], c2 = colors[2], c3 = colors[3], c4 = colors[4];
+
+  // Helper: circles pattern (bubbles/balloons)
+  function circles(count, sizeRange, opacity) {
+    var items = '';
+    for (var i=0; i<count; i++) {
+      var cx = Math.random() * 300;
+      var cy = Math.random() * 240;
+      var r = sizeRange[0] + Math.random() * (sizeRange[1] - sizeRange[0]);
+      var ci = colors[Math.floor(Math.random() * colors.length)];
+      items += '<circle cx="'+cx.toFixed(0)+'" cy="'+cy.toFixed(0)+'" r="'+r.toFixed(0)+'" fill="'+ci+'" opacity="'+(opacity || 0.5)+'"/>';
+    }
+    return items;
+  }
+
+  // Helper: wave/curve
+  function wave(yOffset, color, opacity) {
+    return '<path d="M0,'+(120+yOffset)+' Q75,'+(80+yOffset)+' 150,'+(120+yOffset)+' T300,'+(120+yOffset)+' L300,240 L0,240 Z" fill="'+color+'" opacity="'+(opacity || 0.6)+'"/>';
+  }
+
+  var svg = '';
+
+  // Nature themes: flowers, leaves, blossoms
+  if (t.indexOf('樱') > -1 || t.indexOf('花') > -1 || t.indexOf('春') > -1 || t.indexOf('牡丹') > -1 || t.indexOf('郁金') > -1 || t.indexOf('紫藤') > -1 || t.indexOf('玫瑰') > -1) {
+    svg = '<svg width="300" height="240" viewBox="0 0 300 240" xmlns="http://www.w3.org/2000/svg">';
+    // Petals
+    for (var pi=0; pi<7; pi++) {
+      var px = 40 + Math.random() * 220;
+      var py = 40 + Math.random() * 160;
+      var pr = 25 + Math.random() * 25;
+      var pc = colors[pi % colors.length];
+      svg += '<g transform="translate('+px.toFixed(0)+','+py.toFixed(0)+')">';
+      for (var pj=0; pj<5; pj++) {
+        var angle = (pj * 72) * Math.PI / 180;
+        var px2 = Math.cos(angle) * pr * 0.5;
+        var py2 = Math.sin(angle) * pr * 0.5;
+        svg += '<ellipse cx="'+px2.toFixed(1)+'" cy="'+py2.toFixed(1)+'" rx="'+(pr*0.4).toFixed(0)+'" ry="'+(pr*0.6).toFixed(0)+'" fill="'+pc+'" opacity="0.65" transform="rotate('+pj*72+')"/>';
+      }
+      svg += '<circle cx="0" cy="0" r="'+(pr*0.2).toFixed(0)+'" fill="'+c4+'" opacity="0.8"/></g>';
+    }
+    svg += '</svg>';
+  }
+  // Ocean, water, sky themes
+  else if (t.indexOf('海') > -1 || t.indexOf('洋') > -1 || t.indexOf('水') > -1 || t.indexOf('蓝') > -1 || t.indexOf('冰') > -1 || t.indexOf('雨') > -1 || t.indexOf('浪') > -1) {
+    svg = '<svg width="300" height="240" viewBox="0 0 300 240" xmlns="http://www.w3.org/2000/svg">';
+    svg += '<rect width="300" height="240" fill="none"/>';
+    svg += wave(-20, c3, 0.4);
+    svg += wave(0, c2, 0.5);
+    svg += wave(20, c1, 0.6);
+    svg += wave(40, c0, 0.7);
+    // Bubbles
+    svg += circles(8, [4, 12], 0.6);
+    svg += '</svg>';
+  }
+  // Stars, night, galaxy themes
+  else if (t.indexOf('星') > -1 || t.indexOf('夜') > -1 || t.indexOf('月') > -1 || t.indexOf('银河') > -1 || t.indexOf('极光') > -1) {
+    svg = '<svg width="300" height="240" viewBox="0 0 300 240" xmlns="http://www.w3.org/2000/svg">';
+    // Stars
+    for (var si=0; si<30; si++) {
+      var sx = Math.random() * 300;
+      var sy = Math.random() * 200;
+      var sr = 1 + Math.random() * 3;
+      var sc = colors[Math.floor(Math.random() * colors.length)];
+      svg += '<circle cx="'+sx.toFixed(0)+'" cy="'+sy.toFixed(0)+'" r="'+sr.toFixed(1)+'" fill="'+sc+'" opacity="'+(0.5 + Math.random()*0.5)+'"/>';
+    }
+    // Moon
+    svg += '<circle cx="230" cy="60" r="32" fill="'+c3+'" opacity="0.7"/>';
+    svg += '<circle cx="222" cy="55" r="28" fill="'+c0+'" opacity="0.8"/>';
+    // Aurora curves
+    svg += '<path d="M0,150 Q75,80 150,140 T300,120 L300,240 L0,240 Z" fill="'+c2+'" opacity="0.4"/>';
+    svg += '<path d="M0,170 Q75,110 150,160 T300,140 L300,240 L0,240 Z" fill="'+c1+'" opacity="0.3"/>';
+    svg += '</svg>';
+  }
+  // Autumn, leaves, maple themes
+  else if (t.indexOf('秋') > -1 || t.indexOf('枫') > -1 || t.indexOf('银杏') > -1 || t.indexOf('麦') > -1 || t.indexOf('黄') > -1) {
+    svg = '<svg width="300" height="240" viewBox="0 0 300 240" xmlns="http://www.w3.org/2000/svg">';
+    // Leaves
+    for (var li=0; li<12; li++) {
+      var lx = 20 + Math.random() * 260;
+      var ly = 20 + Math.random() * 200;
+      var ls = 15 + Math.random() * 20;
+      var lc = colors[li % colors.length];
+      var rot = Math.random() * 360;
+      svg += '<g transform="translate('+lx.toFixed(0)+','+ly.toFixed(0)+') rotate('+rot.toFixed(0)+')">';
+      svg += '<path d="M0,'+(-ls)+' L'+(ls*0.5)+',0 L0,'+ls+' L'+(-ls*0.5)+',0 Z" fill="'+lc+'" opacity="0.7"/>';
+      svg += '</g>';
+    }
+    svg += '</svg>';
+  }
+  // Mountain, desert, canyon themes
+  else if (t.indexOf('山') > -1 || t.indexOf('沙漠') > -1 || t.indexOf('峡谷') > -1 || t.indexOf('丹霞') > -1 || t.indexOf('火山') > -1) {
+    svg = '<svg width="300" height="240" viewBox="0 0 300 240" xmlns="http://www.w3.org/2000/svg">';
+    // Mountains
+    svg += '<path d="M0,200 L60,100 L120,160 L180,80 L240,140 L300,90 L300,240 L0,240 Z" fill="'+c3+'" opacity="0.6"/>';
+    svg += '<path d="M0,220 L50,140 L110,180 L170,120 L230,160 L300,130 L300,240 L0,240 Z" fill="'+c2+'" opacity="0.7"/>';
+    svg += '<path d="M0,240 L70,180 L140,210 L210,170 L280,200 L300,190 L300,240 L0,240 Z" fill="'+c1+'" opacity="0.8"/>';
+    // Sun
+    svg += '<circle cx="240" cy="60" r="28" fill="'+c4+'" opacity="0.8"/>';
+    svg += '</svg>';
+  }
+  // Sunset, dawn, dusk themes
+  else if (t.indexOf('日落') > -1 || t.indexOf('黄昏') > -1 || t.indexOf('朝霞') > -1 || t.indexOf('晚霞') > -1 || t.indexOf('晨') > -1 || t.indexOf('曙光') > -1) {
+    svg = '<svg width="300" height="240" viewBox="0 0 300 240" xmlns="http://www.w3.org/2000/svg">';
+    // Sun
+    svg += '<circle cx="150" cy="120" r="50" fill="'+c4+'" opacity="0.9"/>';
+    svg += '<circle cx="150" cy="120" r="35" fill="'+c3+'" opacity="0.8"/>';
+    // Rays
+    for (var ri=0; ri<8; ri++) {
+      var angle = ri * 45 * Math.PI / 180;
+      var rx1 = 150 + Math.cos(angle) * 60;
+      var ry1 = 120 + Math.sin(angle) * 60;
+      var rx2 = 150 + Math.cos(angle) * 90;
+      var ry2 = 120 + Math.sin(angle) * 90;
+      svg += '<line x1="'+rx1.toFixed(0)+'" y1="'+ry1.toFixed(0)+'" x2="'+rx2.toFixed(0)+'" y2="'+ry2.toFixed(0)+'" stroke="'+c2+'" stroke-width="3" opacity="0.5"/>';
+    }
+    svg += '<rect x="0" y="180" width="300" height="60" fill="'+c1+'" opacity="0.5"/>';
+    svg += '</svg>';
+  }
+  // Forest, green, nature themes
+  else if (t.indexOf('森林') > -1 || t.indexOf('绿') > -1 || t.indexOf('草') > -1 || t.indexOf('树') > -1 || t.indexOf('林') > -1 || t.indexOf('竹') > -1) {
+    svg = '<svg width="300" height="240" viewBox="0 0 300 240" xmlns="http://www.w3.org/2000/svg">';
+    // Trees
+    for (var ti=0; ti<6; ti++) {
+      var tx = 20 + ti * 50 + Math.random() * 20;
+      var ty = 180 + Math.random() * 20;
+      var th = 60 + Math.random() * 40;
+      var tc = colors[ti % colors.length];
+      // Trunk
+      svg += '<rect x="'+(tx-3)+'" y="'+ty+'" width="6" height="'+(th*0.4)+'" fill="'+c4+'" opacity="0.7"/>';
+      // Foliage
+      svg += '<circle cx="'+tx+'" cy="'+(ty-th*0.5)+'" r="'+(th*0.4)+'" fill="'+tc+'" opacity="0.75"/>';
+      svg += '<circle cx="'+(tx-8)+'" cy="'+(ty-th*0.3)+'" r="'+(th*0.3)+'" fill="'+tc+'" opacity="0.65"/>';
+      svg += '<circle cx="'+(tx+8)+'" cy="'+(ty-th*0.3)+'" r="'+(th*0.3)+'" fill="'+tc+'" opacity="0.65"/>';
+    }
+    svg += '<rect x="0" y="200" width="300" height="40" fill="'+c1+'" opacity="0.5"/>';
+    svg += '</svg>';
+  }
+  // Snow, winter, ice themes
+  else if (t.indexOf('雪') > -1 || t.indexOf('冬') > -1 || t.indexOf('霜') > -1 || t.indexOf('冰') > -1) {
+    svg = '<svg width="300" height="240" viewBox="0 0 300 240" xmlns="http://www.w3.org/2000/svg">';
+    // Snowflakes
+    for (var si2=0; si2<20; si2++) {
+      var sx2 = Math.random() * 300;
+      var sy2 = Math.random() * 240;
+      var ss = 4 + Math.random() * 8;
+      var sc2 = colors[si2 % colors.length];
+      svg += '<g transform="translate('+sx2.toFixed(0)+','+sy2.toFixed(0)+')">';
+      for (var sa=0; sa<6; sa++) {
+        var sang = sa * 60 * Math.PI / 180;
+        var sx3 = Math.cos(sang) * ss;
+        var sy3 = Math.sin(sang) * ss;
+        svg += '<line x1="0" y1="0" x2="'+sx3.toFixed(1)+'" y2="'+sy3.toFixed(1)+'" stroke="'+sc2+'" stroke-width="1.5" opacity="0.7"/>';
+      }
+      svg += '</g>';
+    }
+    svg += '</svg>';
+  }
+  // Food, dessert, sweet themes
+  else if (t.indexOf('甜') > -1 || t.indexOf('糖') > -1 || t.indexOf('马卡龙') > -1 || t.indexOf('蛋糕') > -1 || t.indexOf('布丁') > -1 || t.indexOf('芝士') > -1 || t.indexOf('巧克力') > -1 || t.indexOf('抹茶') > -1 || t.indexOf('咖啡') > -1 || t.indexOf('酒') > -1) {
+    svg = '<svg width="300" height="240" viewBox="0 0 300 240" xmlns="http://www.w3.org/2000/svg">';
+    // Cake layers
+    svg += '<rect x="80" y="140" width="140" height="50" rx="8" fill="'+c3+'" opacity="0.8"/>';
+    svg += '<rect x="90" y="110" width="120" height="35" rx="6" fill="'+c2+'" opacity="0.8"/>';
+    svg += '<rect x="100" y="85" width="100" height="28" rx="5" fill="'+c1+'" opacity="0.8"/>';
+    // Cherry
+    svg += '<circle cx="150" cy="75" r="8" fill="'+c4+'" opacity="0.9"/>';
+    svg += '<rect x="148" y="60" width="4" height="18" fill="'+c4+'" opacity="0.6"/>';
+    // Decorations
+    svg += circles(6, [3, 8], 0.7);
+    svg += '</svg>';
+  }
+  // Animal themes
+  else if (t.indexOf('孔雀') > -1 || t.indexOf('火烈') > -1 || t.indexOf('蝴蝶') > -1 || t.indexOf('鱼') > -1 || t.indexOf('熊') > -1) {
+    svg = '<svg width="300" height="240" viewBox="0 0 300 240" xmlns="http://www.w3.org/2000/svg">';
+    // Feathers/wings pattern
+    for (var fi=0; fi<5; fi++) {
+      var fx = 60 + fi * 45;
+      var fy = 120;
+      var fc = colors[fi % colors.length];
+      svg += '<ellipse cx="'+fx+'" cy="'+fy+'" rx="25" ry="50" fill="'+fc+'" opacity="0.65" transform="rotate('+(-30+fi*15)+' '+fx+' '+fy+')"/>';
+    }
+    svg += '<circle cx="150" cy="120" r="18" fill="'+c4+'" opacity="0.8"/>';
+    svg += '</svg>';
+  }
+  // Architecture/building themes
+  else if (t.indexOf('建筑') > -1 || t.indexOf('教堂') > -1 || t.indexOf('包豪斯') > -1 || t.indexOf('地中海') > -1 || t.indexOf('工业') > -1) {
+    svg = '<svg width="300" height="240" viewBox="0 0 300 240" xmlns="http://www.w3.org/2000/svg">';
+    // Buildings
+    svg += '<rect x="60" y="100" width="50" height="120" fill="'+c3+'" opacity="0.8"/>';
+    svg += '<rect x="120" y="70" width="60" height="150" fill="'+c2+'" opacity="0.8"/>';
+    svg += '<rect x="190" y="110" width="50" height="110" fill="'+c1+'" opacity="0.8"/>';
+    // Windows
+    for (var wi=0; wi<6; wi++) {
+      svg += '<rect x="'+(70+wi*20)+'" y="'+(120+wi*15)+'" width="8" height="8" fill="'+c4+'" opacity="0.7"/>';
+    }
+    // Roof
+    svg += '<polygon points="120,70 150,40 180,70" fill="'+c4+'" opacity="0.7"/>';
+    svg += '</svg>';
+  }
+  // Abstract/geometric default
+  else {
+    svg = '<svg width="300" height="240" viewBox="0 0 300 240" xmlns="http://www.w3.org/2000/svg">';
+    // Geometric pattern
+    svg += '<rect x="50" y="50" width="80" height="80" rx="12" fill="'+c2+'" opacity="0.7" transform="rotate(15 90 90)"/>';
+    svg += '<circle cx="200" cy="80" r="45" fill="'+c3+'" opacity="0.65"/>';
+    svg += '<polygon points="150,140 220,200 80,200" fill="'+c1+'" opacity="0.7"/>';
+    svg += '<circle cx="240" cy="180" r="30" fill="'+c4+'" opacity="0.6"/>';
+    svg += '<rect x="30" y="160" width="50" height="50" rx="10" fill="'+c3+'" opacity="0.5" transform="rotate(-10 55 185)"/>';
+    svg += '</svg>';
+  }
+
+  return svg;
 }
 
 function hexToRgb(hex) {
