@@ -1,0 +1,1461 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>PaletteHub · 发现灵感色卡</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@500;600;700&family=Nunito:ital,wght@0,400;0,500;0,600;0,700;1,400&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+/* ═══════════════════════════════════════════════
+   PaletteHub — Design Token System
+   Warm, friendly, human-centered design language
+   ═══════════════════════════════════════════════ */
+
+:root {
+  /* ── Primary: Warm Coral / Peach ── */
+  --primary-50:  oklch(97% 0.018 35);
+  --primary-100: oklch(94% 0.032 33);
+  --primary-200: oklch(88% 0.065 30);
+  --primary-300: oklch(80% 0.095 28);
+  --primary-400: oklch(72% 0.125 26);
+  --primary-500: oklch(65% 0.145 24);
+  --primary-600: oklch(58% 0.14 24);
+  --primary-700: oklch(50% 0.12 24);
+
+  /* ── Accent: Golden warmth ── */
+  --accent-100: oklch(96% 0.05 85);
+  --accent-200: oklch(91% 0.08 82);
+  --accent-500: oklch(75% 0.14 72);
+
+  /* ── Neutrals: Warm-tinted grays ── */
+  --warm-50:  oklch(98.5% 0.003 60);
+  --warm-100: oklch(96% 0.005 55);
+  --warm-200: oklch(92% 0.008 50);
+  --warm-300: oklch(85% 0.012 45);
+  --warm-400: oklch(72% 0.012 40);
+  --warm-500: oklch(58% 0.012 38);
+  --warm-600: oklch(45% 0.015 35);
+  --warm-700: oklch(32% 0.015 32);
+  --warm-800: oklch(22% 0.012 30);
+  --warm-900: oklch(14% 0.008 28);
+
+  /* ── Surface elevations ── */
+  --surface-base:   var(--warm-50);
+  --surface-raised: oklch(100% 0 0);
+  --surface-overlay: oklch(100% 0 0);
+
+  /* ── Category colors (low saturation, warm tone) ── */
+  --cat-color:    oklch(93% 0.035 15);
+  --cat-color-text: oklch(45% 0.13 18);
+  --cat-illust:   oklch(94% 0.028 155);
+  --cat-illust-text: oklch(42% 0.1 155);
+  --cat-material: oklch(94% 0.032 65);
+  --cat-material-text: oklch(42% 0.1 55);
+  --cat-font:     oklch(93% 0.025 250);
+  --cat-font-text: oklch(42% 0.09 250);
+  --cat-ui:       oklch(93% 0.025 300);
+  --cat-ui-text: oklch(40% 0.09 300);
+
+  /* ── Typography ── */
+  --font-display: 'Quicksand', system-ui, -apple-system, sans-serif;
+  --font-body:    'Nunito', system-ui, -apple-system, sans-serif;
+  --font-mono:    'JetBrains Mono', ui-monospace, monospace;
+
+  --text-xs:    clamp(0.6875rem, 0.65rem + 0.15vw, 0.75rem);
+  --text-sm:    clamp(0.8125rem, 0.78rem + 0.15vw, 0.875rem);
+  --text-base:  clamp(0.9375rem, 0.9rem + 0.2vw, 1rem);
+  --text-lg:    clamp(1.0625rem, 1rem + 0.25vw, 1.125rem);
+  --text-xl:    clamp(1.1875rem, 1.1rem + 0.35vw, 1.25rem);
+  --text-2xl:   clamp(1.375rem, 1.25rem + 0.5vw, 1.5rem);
+  --text-3xl:   clamp(1.75rem, 1.5rem + 0.8vw, 2rem);
+  --text-4xl:   clamp(2.25rem, 1.8rem + 1.5vw, 3rem);
+
+  /* ── Spacing (4px base) ── */
+  --space-1:  0.25rem;
+  --space-2:  0.5rem;
+  --space-3:  0.75rem;
+  --space-4:  1rem;
+  --space-5:  1.25rem;
+  --space-6:  1.5rem;
+  --space-8:  2rem;
+  --space-10: 2.5rem;
+  --space-12: 3rem;
+  --space-16: 4rem;
+
+  /* ── Radii ── */
+  --radius-sm:  6px;
+  --radius-md:  10px;
+  --radius-lg:  14px;
+  --radius-xl:  20px;
+  --radius-full: 999px;
+
+  /* ── Shadows (warm-tinted) ── */
+  --shadow-xs: 0 1px 2px oklch(0% 0 0 / 0.03);
+  --shadow-sm: 0 2px 8px oklch(0% 0 0 / 0.04);
+  --shadow-md: 0 4px 16px oklch(0% 0 0 / 0.06);
+  --shadow-lg: 0 8px 30px oklch(0% 0 0 / 0.08);
+  --shadow-xl: 0 16px 48px oklch(0% 0 0 / 0.10);
+
+  /* ── Motion ── */
+  --ease-out-expo: cubic-bezier(0.16, 1, 0.3, 1);
+  --ease-out-quart: cubic-bezier(0.25, 1, 0.5, 1);
+  --ease-in-out: cubic-bezier(0.65, 0, 0.35, 1);
+  --duration-fast: 150ms;
+  --duration-normal: 280ms;
+  --duration-slow: 450ms;
+
+  /* ── Layout ── */
+  --header-h: 4rem;
+  --sidebar-w: 0px;
+}
+
+/* ═══════════════════════════════════════════════
+   Reset & Base
+   ═══════════════════════════════════════════════ */
+
+*, *::before, *::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html {
+  scroll-behavior: smooth;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+body {
+  font-family: var(--font-body);
+  font-size: var(--text-base);
+  font-weight: 400;
+  line-height: 1.6;
+  color: var(--warm-700);
+  background: var(--surface-base);
+  min-height: 100vh;
+  overflow-x: hidden;
+}
+
+img { display: block; max-width: 100%; }
+button { cursor: pointer; font: inherit; }
+input, select { font: inherit; }
+
+/* ═══════════════════════════════════════════════
+   Header / Navigation
+   ═══════════════════════════════════════════════ */
+
+.site-header {
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  height: var(--header-h);
+  background: oklch(100% 0 0 / 0.85);
+  backdrop-filter: blur(20px) saturate(180%);
+  -webkit-backdrop-filter: blur(20px) saturate(180%);
+  border-bottom: 1px solid var(--warm-200);
+  display: flex;
+  align-items: center;
+  padding: 0 var(--space-8);
+  gap: var(--space-6);
+}
+
+.header-logo {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  font-family: var(--font-display);
+  font-size: var(--text-xl);
+  font-weight: 700;
+  color: var(--warm-800);
+  text-decoration: none;
+  flex-shrink: 0;
+}
+
+.header-logo .logo-dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, var(--primary-400), var(--accent-500));
+  animation: logo-pulse 2s var(--ease-in-out) infinite;
+}
+
+@keyframes logo-pulse {
+  0%, 100% { transform: scale(1); opacity: 1; }
+  50% { transform: scale(1.3); opacity: 0.7; }
+}
+
+.header-search {
+  flex: 1;
+  max-width: 480px;
+  position: relative;
+}
+
+.header-search input {
+  width: 100%;
+  height: 44px;
+  padding: 0 var(--space-4) 0 var(--space-10);
+  background: var(--warm-100);
+  border: 1.5px solid transparent;
+  border-radius: var(--radius-full);
+  font-size: var(--text-sm);
+  color: var(--warm-700);
+  transition: all var(--duration-fast) var(--ease-out-expo);
+}
+
+.header-search input:focus {
+  outline: none;
+  background: var(--surface-raised);
+  border-color: var(--primary-300);
+  box-shadow: 0 0 0 3px oklch(72% 0.125 26 / 0.12);
+}
+
+.header-search input::placeholder { color: var(--warm-400); }
+
+.header-search .search-icon {
+  position: absolute;
+  left: var(--space-4);
+  top: 50%;
+  transform: translateY(-50%);
+  color: var(--warm-400);
+  pointer-events: none;
+}
+
+.header-actions {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  flex-shrink: 0;
+}
+
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-2);
+  padding: var(--space-2) var(--space-5);
+  border-radius: var(--radius-full);
+  font-family: var(--font-display);
+  font-weight: 600;
+  font-size: var(--text-sm);
+  border: none;
+  transition: all var(--duration-fast) var(--ease-out-expo);
+  white-space: nowrap;
+}
+
+.btn-ghost {
+  background: transparent;
+  color: var(--warm-600);
+}
+
+.btn-ghost:hover {
+  background: var(--warm-100);
+  color: var(--warm-800);
+}
+
+.btn-primary {
+  background: linear-gradient(135deg, var(--primary-500), var(--primary-400));
+  color: white;
+  box-shadow: var(--shadow-sm);
+}
+
+.btn-primary:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 4px 16px oklch(65% 0.145 24 / 0.3);
+}
+
+.btn-primary:active {
+  transform: translateY(0);
+}
+
+/* ═══════════════════════════════════════════════
+   Category Filter Bar
+   ═══════════════════════════════════════════════ */
+
+.category-bar {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  padding: var(--space-6) var(--space-8) var(--space-4);
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: none;
+}
+
+.category-bar::-webkit-scrollbar { display: none; }
+
+.cat-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 16px;
+  border-radius: var(--radius-full);
+  font-family: var(--font-display);
+  font-size: var(--text-sm);
+  font-weight: 600;
+  border: 1.5px solid transparent;
+  background: var(--surface-raised);
+  color: var(--warm-500);
+  cursor: pointer;
+  transition: all var(--duration-fast) var(--ease-out-expo);
+  flex-shrink: 0;
+  white-space: nowrap;
+}
+
+.cat-chip:hover {
+  color: var(--warm-700);
+  border-color: var(--warm-300);
+  transform: translateY(-1px);
+}
+
+.cat-chip.active {
+  background: var(--warm-800);
+  color: oklch(98% 0.003 60);
+  border-color: var(--warm-800);
+}
+
+.cat-chip .cat-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
+.cat-dot--all { background: var(--warm-500); }
+.cat-dot--color { background: oklch(65% 0.16 20); }
+.cat-dot--illust { background: oklch(60% 0.12 155); }
+.cat-dot--material { background: oklch(65% 0.14 65); }
+.cat-dot--font { background: oklch(60% 0.1 250); }
+.cat-dot--ui { background: oklch(55% 0.12 300); }
+
+/* ═══════════════════════════════════════════════
+   Stats Bar
+   ═══════════════════════════════════════════════ */
+
+.stats-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 var(--space-8) var(--space-4);
+  flex-wrap: wrap;
+  gap: var(--space-3);
+}
+
+.stats-count {
+  font-size: var(--text-sm);
+  color: var(--warm-500);
+  font-weight: 500;
+}
+
+.stats-count strong {
+  color: var(--warm-700);
+  font-weight: 700;
+}
+
+.sort-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-1);
+  padding: 6px 12px;
+  border-radius: var(--radius-full);
+  font-size: var(--text-xs);
+  font-weight: 600;
+  color: var(--warm-500);
+  background: var(--surface-raised);
+  border: 1px solid var(--warm-200);
+  cursor: pointer;
+  transition: all var(--duration-fast);
+}
+
+.sort-btn:hover {
+  color: var(--warm-700);
+  border-color: var(--warm-300);
+}
+
+.sort-btn.active {
+  background: var(--warm-800);
+  color: oklch(98% 0 0);
+  border-color: var(--warm-800);
+}
+
+/* ═══════════════════════════════════════════════
+   Masonry Grid
+   ═══════════════════════════════════════════════ */
+
+.masonry {
+  columns: 4;
+  column-gap: var(--space-5);
+  padding: 0 var(--space-8) var(--space-16);
+}
+
+@media (max-width: 1200px) { .masonry { columns: 3; } }
+@media (max-width: 860px)  { .masonry { columns: 2; } }
+@media (max-width: 520px)  { .masonry { columns: 1; } }
+
+/* ═══════════════════════════════════════════════
+   Asset Card
+   ═══════════════════════════════════════════════ */
+
+.asset-card {
+  break-inside: avoid;
+  margin-bottom: var(--space-5);
+  background: var(--surface-raised);
+  border-radius: var(--radius-lg);
+  border: 1px solid var(--warm-200);
+  overflow: hidden;
+  cursor: pointer;
+  transition:
+    transform var(--duration-normal) var(--ease-out-quart),
+    box-shadow var(--duration-normal) var(--ease-out-quart),
+    border-color var(--duration-normal) var(--ease-out-quart);
+  position: relative;
+}
+
+.asset-card:hover {
+  transform: translateY(-4px);
+  box-shadow: var(--shadow-lg);
+  border-color: var(--primary-200);
+}
+
+.asset-card:active {
+  transform: translateY(-2px);
+}
+
+/* ── Card image ── */
+.card-image-wrap {
+  position: relative;
+  overflow: hidden;
+  background: var(--warm-100);
+  /* Inset border for the "breathing edge" effect */
+  box-shadow: inset 0 0 0 1px oklch(0% 0 0 / 0.04);
+}
+
+.card-image-wrap img {
+  width: 100%;
+  height: auto;
+  display: block;
+  transition: transform var(--duration-slow) var(--ease-out-expo);
+}
+
+.asset-card:hover .card-image-wrap img {
+  transform: scale(1.03);
+}
+
+/* ── Color palette strip ── */
+.card-palette {
+  display: flex;
+  height: 6px;
+  gap: 1px;
+}
+
+.card-palette .swatch {
+  flex: 1;
+  transition: flex var(--duration-normal) var(--ease-out-quart);
+}
+
+.asset-card:hover .card-palette .swatch {
+  flex: 1.3;
+}
+
+/* ── Save button (heart) ── */
+.card-save {
+  position: absolute;
+  top: var(--space-3);
+  right: var(--space-3);
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  background: oklch(100% 0 0 / 0.85);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  border: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--warm-400);
+  font-size: 18px;
+  transition: all var(--duration-fast) var(--ease-out-expo);
+  opacity: 0;
+  transform: scale(0.8);
+}
+
+.asset-card:hover .card-save,
+.card-save.saved {
+  opacity: 1;
+  transform: scale(1);
+}
+
+.card-save:hover {
+  background: oklch(100% 0 0 / 0.95);
+  color: oklch(60% 0.18 18);
+}
+
+.card-save.saved {
+  color: oklch(60% 0.18 18);
+  background: oklch(96% 0.025 15);
+}
+
+/* ── Card body ── */
+.card-body {
+  padding: var(--space-4);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+}
+
+.card-title {
+  font-family: var(--font-display);
+  font-size: var(--text-base);
+  font-weight: 700;
+  color: var(--warm-800);
+  line-height: 1.35;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.card-meta {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  font-size: var(--text-xs);
+  color: var(--warm-500);
+}
+
+.card-meta .meta-author {
+  display: flex;
+  align-items: center;
+  gap: var(--space-1);
+}
+
+.card-author-avatar {
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  background: var(--warm-300);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 10px;
+  font-weight: 700;
+  color: var(--warm-600);
+  flex-shrink: 0;
+}
+
+.card-stats {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  margin-left: auto;
+}
+
+.card-stats span {
+  display: flex;
+  align-items: center;
+  gap: 3px;
+}
+
+/* ── Category tag ── */
+.card-tag-row {
+  display: flex;
+  gap: var(--space-2);
+  flex-wrap: wrap;
+}
+
+.card-tag {
+  display: inline-flex;
+  padding: 3px 10px;
+  border-radius: var(--radius-full);
+  font-size: 11px;
+  font-weight: 700;
+  font-family: var(--font-display);
+}
+
+.tag-color    { background: var(--cat-color);    color: var(--cat-color-text); }
+.tag-illust   { background: var(--cat-illust);   color: var(--cat-illust-text); }
+.tag-material { background: var(--cat-material); color: var(--cat-material-text); }
+.tag-font     { background: var(--cat-font);     color: var(--cat-font-text); }
+.tag-ui       { background: var(--cat-ui);       color: var(--cat-ui-text); }
+
+/* ═══════════════════════════════════════════════
+   Empty State
+   ═══════════════════════════════════════════════ */
+
+.empty-state {
+  display: none;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: var(--space-16) var(--space-8);
+  text-align: center;
+}
+
+.empty-state.visible {
+  display: flex;
+}
+
+.empty-illustration {
+  font-size: 72px;
+  margin-bottom: var(--space-6);
+  animation: float 3s var(--ease-in-out) infinite;
+}
+
+@keyframes float {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-10px); }
+}
+
+.empty-state h3 {
+  font-family: var(--font-display);
+  font-size: var(--text-2xl);
+  color: var(--warm-700);
+  margin-bottom: var(--space-2);
+}
+
+.empty-state p {
+  color: var(--warm-500);
+  max-width: 320px;
+  font-size: var(--text-sm);
+}
+
+/* ═══════════════════════════════════════════════
+   Loading Skeleton
+   ═══════════════════════════════════════════════ */
+
+.skeleton-card {
+  break-inside: avoid;
+  margin-bottom: var(--space-5);
+  background: var(--surface-raised);
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+}
+
+.skeleton-image {
+  aspect-ratio: 4/3;
+  background: linear-gradient(
+    110deg,
+    var(--warm-100) 30%,
+    var(--warm-200) 50%,
+    var(--warm-100) 70%
+  );
+  background-size: 200% 100%;
+  animation: shimmer 1.5s infinite;
+}
+
+.skeleton-body {
+  padding: var(--space-4);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+}
+
+.skeleton-line {
+  height: 14px;
+  border-radius: var(--radius-sm);
+  background: linear-gradient(
+    110deg,
+    var(--warm-100) 30%,
+    var(--warm-200) 50%,
+    var(--warm-100) 70%
+  );
+  background-size: 200% 100%;
+  animation: shimmer 1.5s infinite;
+}
+
+.skeleton-line--title { width: 85%; height: 16px; }
+.skeleton-line--meta  { width: 55%; }
+.skeleton-line--tags  { width: 65%; }
+
+@keyframes shimmer {
+  to { background-position-x: -200%; }
+}
+
+/* ═══════════════════════════════════════════════
+   Toast Notification
+   ═══════════════════════════════════════════════ */
+
+.toast {
+  position: fixed;
+  bottom: var(--space-8);
+  left: 50%;
+  transform: translateX(-50%) translateY(100px);
+  background: var(--warm-800);
+  color: oklch(98% 0 0);
+  padding: var(--space-3) var(--space-6);
+  border-radius: var(--radius-full);
+  font-size: var(--text-sm);
+  font-weight: 600;
+  box-shadow: var(--shadow-lg);
+  z-index: 1000;
+  transition: transform var(--duration-normal) var(--ease-out-quart);
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+}
+
+.toast.show {
+  transform: translateX(-50%) translateY(0);
+}
+
+/* ═══════════════════════════════════════════════
+   Detail Modal
+   ═══════════════════════════════════════════════ */
+
+.modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: oklch(0% 0 0 / 0.5);
+  backdrop-filter: blur(4px);
+  -webkit-backdrop-filter: blur(4px);
+  z-index: 200;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: var(--space-6);
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity var(--duration-normal) var(--ease-out-expo);
+}
+
+.modal-overlay.open {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+.modal {
+  background: var(--surface-raised);
+  border-radius: var(--radius-xl);
+  max-width: 640px;
+  width: 100%;
+  max-height: 85vh;
+  overflow-y: auto;
+  box-shadow: var(--shadow-xl);
+  transform: translateY(20px) scale(0.96);
+  transition: transform var(--duration-normal) var(--ease-out-quart);
+}
+
+.modal-overlay.open .modal {
+  transform: translateY(0) scale(1);
+}
+
+.modal-image {
+  width: 100%;
+  aspect-ratio: 16/10;
+  object-fit: cover;
+  border-radius: var(--radius-xl) var(--radius-xl) 0 0;
+}
+
+.modal-body {
+  padding: var(--space-6) var(--space-8) var(--space-8);
+}
+
+.modal-body h2 {
+  font-family: var(--font-display);
+  font-size: var(--text-2xl);
+  font-weight: 700;
+  color: var(--warm-800);
+  margin-bottom: var(--space-2);
+}
+
+.modal-meta {
+  display: flex;
+  align-items: center;
+  gap: var(--space-4);
+  font-size: var(--text-sm);
+  color: var(--warm-500);
+  margin-bottom: var(--space-4);
+}
+
+.modal-palette {
+  display: flex;
+  gap: var(--space-2);
+  margin-bottom: var(--space-4);
+}
+
+.modal-palette .swatch-block {
+  flex: 1;
+  height: 48px;
+  border-radius: var(--radius-md);
+  position: relative;
+  cursor: pointer;
+  transition: transform var(--duration-fast);
+}
+
+.modal-palette .swatch-block:hover {
+  transform: scale(1.05);
+}
+
+.modal-palette .swatch-block .hex-label {
+  position: absolute;
+  bottom: 6px;
+  left: 50%;
+  transform: translateX(-50%);
+  font-family: var(--font-mono);
+  font-size: 11px;
+  font-weight: 500;
+  color: oklch(100% 0 0 / 0.9);
+  text-shadow: 0 1px 2px rgba(0,0,0,0.3);
+}
+
+.modal-close {
+  position: absolute;
+  top: var(--space-4);
+  right: var(--space-4);
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background: oklch(100% 0 0 / 0.85);
+  backdrop-filter: blur(8px);
+  border: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 20px;
+  color: var(--warm-600);
+  cursor: pointer;
+  transition: all var(--duration-fast);
+}
+
+.modal-close:hover {
+  background: white;
+  color: var(--warm-800);
+}
+
+/* ═══════════════════════════════════════════════
+   Reduced Motion
+   ═══════════════════════════════════════════════ */
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
+/* ═══════════════════════════════════════════════
+   Scrollbar styling
+   ═══════════════════════════════════════════════ */
+
+::-webkit-scrollbar { width: 6px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb {
+  background: var(--warm-300);
+  border-radius: 3px;
+}
+::-webkit-scrollbar-thumb:hover { background: var(--warm-400); }
+</style>
+</head>
+<body>
+
+<!-- ═══════════════ HEADER ═══════════════ -->
+<header class="site-header">
+  <a href="#" class="header-logo">
+    <span class="logo-dot"></span>
+    PaletteHub
+  </a>
+
+  <div class="header-search">
+    <svg class="search-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg>
+    <input type="text" id="searchInput" placeholder="搜索色卡、素材、配色方案…" autocomplete="off">
+  </div>
+
+  <div class="header-actions">
+    <button class="btn btn-ghost">浏览</button>
+    <button class="btn btn-ghost">收藏</button>
+    <button class="btn btn-primary" onclick="showToast('发布功能即将上线 ✨')">发布素材</button>
+  </div>
+</header>
+
+<!-- ═══════════════ CATEGORY FILTER ═══════════════ -->
+<nav class="category-bar" id="categoryBar">
+  <button class="cat-chip active" data-cat="all">
+    <span class="cat-dot cat-dot--all"></span>全部
+  </button>
+  <button class="cat-chip" data-cat="color">
+    <span class="cat-dot cat-dot--color"></span>配色色卡
+  </button>
+  <button class="cat-chip" data-cat="illust">
+    <span class="cat-dot cat-dot--illust"></span>插画素材
+  </button>
+  <button class="cat-chip" data-cat="material">
+    <span class="cat-dot cat-dot--material"></span>设计素材
+  </button>
+  <button class="cat-chip" data-cat="font">
+    <span class="cat-dot cat-dot--font"></span>字体排版
+  </button>
+  <button class="cat-chip" data-cat="ui">
+    <span class="cat-dot cat-dot--ui"></span>UI 组件
+  </button>
+</nav>
+
+<!-- ═══════════════ STATS BAR ═══════════════ -->
+<div class="stats-bar">
+  <span class="stats-count" id="statsCount">共 <strong>24</strong> 个素材</span>
+  <div style="display:flex;gap:8px;">
+    <button class="sort-btn active" data-sort="popular">🔥 热门</button>
+    <button class="sort-btn" data-sort="newest">🕐 最新</button>
+    <button class="sort-btn" data-sort="trending">📈 趋势</button>
+  </div>
+</div>
+
+<!-- ═══════════════ MASONRY GRID ═══════════════ -->
+<main class="masonry" id="masonryGrid">
+  <!-- Cards rendered by JS -->
+</main>
+
+<!-- ═══════════════ EMPTY STATE ═══════════════ -->
+<div class="empty-state" id="emptyState">
+  <div class="empty-illustration">🎨</div>
+  <h3>还没有找到匹配的素材</h3>
+  <p>试试调整筛选条件，或者发布第一个色卡素材吧</p>
+</div>
+
+<!-- ═══════════════ TOAST ═══════════════ -->
+<div class="toast" id="toast"></div>
+
+<!-- ═══════════════ DETAIL MODAL ═══════════════ -->
+<div class="modal-overlay" id="modalOverlay" onclick="closeModal(event)">
+  <div class="modal" id="modalContent" onclick="event.stopPropagation()">
+    <button class="modal-close" onclick="closeModal()">✕</button>
+    <div id="modalInner"></div>
+  </div>
+</div>
+
+<script>
+/* ═══════════════════════════════════════════════
+   Data — Simulated design asset library
+   ═══════════════════════════════════════════════ */
+
+const ASSETS = [
+  {
+    id: 1,
+    title: '暖橙日落 — 渐变配色方案',
+    image: 'https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?w=600&h=800&fit=crop',
+    author: '柠檬设计',
+    avatar: '柠',
+    likes: 2347,
+    saves: 892,
+    category: 'color',
+    tags: ['配色', '渐变'],
+    palette: ['#FF6B35', '#F7931E', '#FDC830', '#FFE259', '#FFF3CD'],
+    featured: true
+  },
+  {
+    id: 2,
+    title: '柔和莫兰迪 — UI 界面配色套件',
+    image: 'https://images.unsplash.com/photo-1558618666-fcd25c85f82e?w=600&h=600&fit=crop',
+    author: '莫兰迪的猫',
+    avatar: '莫',
+    likes: 1823,
+    saves: 654,
+    category: 'color',
+    tags: ['配色', 'UI'],
+    palette: ['#C4A59D', '#9B8E8E', '#7D8A8B', '#B5C1B4', '#D4C5B9'],
+    featured: true
+  },
+  {
+    id: 3,
+    title: '几何线条 — 120+ 矢量图形素材包',
+    image: 'https://images.unsplash.com/photo-1557683316-973673baf926?w=600&h=900&fit=crop',
+    author: '几何猫',
+    avatar: '几',
+    likes: 3156,
+    saves: 1204,
+    category: 'material',
+    tags: ['矢量', '图形'],
+    palette: ['#2D3436', '#636E72', '#B2BEC3', '#DFE6E9', '#F5F6FA']
+  },
+  {
+    id: 4,
+    title: '春日花园 — 清新植物插画集',
+    image: 'https://images.unsplash.com/photo-1618331835717-801e976710b2?w=600&h=750&fit=crop',
+    author: '小花设计师',
+    avatar: '花',
+    likes: 4521,
+    saves: 1890,
+    category: 'illust',
+    tags: ['插画', '自然'],
+    palette: ['#6C9A4A', '#A8C97B', '#D4E7C5', '#F2C94C', '#F2994A']
+  },
+  {
+    id: 5,
+    title: '暗夜霓虹 — 赛博朋克配色系列',
+    image: 'https://images.unsplash.com/photo-1550745165-9bc0b252726f?w=600&h=800&fit=crop',
+    author: '霓虹旅人',
+    avatar: '霓',
+    likes: 5678,
+    saves: 2341,
+    category: 'color',
+    tags: ['配色', '赛博朋克'],
+    palette: ['#0F0F23', '#1A1A3E', '#FF2A6D', '#05D9E8', '#D1F7FF'],
+    featured: true
+  },
+  {
+    id: 6,
+    title: '手绘涂鸦 — 450+ 可爱图标集',
+    image: 'https://images.unsplash.com/photo-1618172193763-c511deb635ca?w=600&h=600&fit=crop',
+    author: '涂鸦大王',
+    avatar: '涂',
+    likes: 2890,
+    saves: 967,
+    category: 'material',
+    tags: ['图标', '手绘'],
+    palette: ['#FFD93D', '#FF8C42', '#FF5E5B', '#6BCB77', '#4D96FF']
+  },
+  {
+    id: 7,
+    title: '经典衬线 — 中英文排版字体方案',
+    image: 'https://images.unsplash.com/photo-1555066931-4365d14bab8c?w=600&h=400&fit=crop',
+    author: '字体猎人',
+    avatar: '字',
+    likes: 1234,
+    saves: 445,
+    category: 'font',
+    tags: ['字体', '排版'],
+    palette: ['#1A1A1A', '#333333', '#666666', '#999999', '#F5F5F5']
+  },
+  {
+    id: 8,
+    title: '毛玻璃组件库 — 20 种 UI 卡片样式',
+    image: 'https://images.unsplash.com/photo-1618788372246-79faff0c3742?w=600&h=850&fit=crop',
+    author: '玻璃工坊',
+    avatar: '玻',
+    likes: 3456,
+    saves: 1567,
+    category: 'ui',
+    tags: ['UI', '组件'],
+    palette: ['#E8F4FD', '#BBDEFB', '#90CAF9', '#64B5F6', '#42A5F5']
+  },
+  {
+    id: 9,
+    title: '海洋深呼吸 — 蓝绿渐变调色板',
+    image: 'https://images.unsplash.com/photo-1507525428034-b723cf961d3e?w=600&h=700&fit=crop',
+    author: '海风设计',
+    avatar: '海',
+    likes: 2100,
+    saves: 876,
+    category: 'color',
+    tags: ['配色', '渐变', '海洋'],
+    palette: ['#0077B6', '#00B4D8', '#90E0EF', '#CAF0F8', '#FFFFFF']
+  },
+  {
+    id: 10,
+    title: '3D 质感图标 — 200+ 等距插画元素',
+    image: 'https://images.unsplash.com/photo-1633356122544-f134324a6cee?w=600&h=600&fit=crop',
+    author: '立方体社',
+    avatar: '立',
+    likes: 4890,
+    saves: 2034,
+    category: 'illust',
+    tags: ['3D', '图标', '插画'],
+    palette: ['#FF6B6B', '#FFA07A', '#FFD93D', '#6BCB77', '#4D96FF']
+  },
+  {
+    id: 11,
+    title: '晨光微熹 — 温柔日系色彩系列',
+    image: 'https://images.unsplash.com/photo-1499002238440-d264edd596ec?w=600&h=750&fit=crop',
+    author: '晨光收集者',
+    avatar: '晨',
+    likes: 1678,
+    saves: 543,
+    category: 'color',
+    tags: ['日系', '温柔', '配色'],
+    palette: ['#FDF0D5', '#FAD2E1', '#C5DEDD', '#D8E2DC', '#ECE4DB']
+  },
+  {
+    id: 12,
+    title: '极简线框 — 60 种网站布局模板',
+    image: 'https://images.unsplash.com/photo-1507238691740-187a5b1d37b8?w=600&h=800&fit=crop',
+    author: '线框设计',
+    avatar: '线',
+    likes: 2345,
+    saves: 987,
+    category: 'ui',
+    tags: ['布局', '线框', '网站'],
+    palette: ['#FFFFFF', '#F8F9FA', '#DEE2E6', '#ADB5BD', '#212529']
+  },
+  {
+    id: 13,
+    title: '日落沙滩 — 暖色系品牌配色',
+    image: 'https://images.unsplash.com/photo-1507525428034-b723cf961d3e?w=600&h=900&fit=crop',
+    author: '落日收藏',
+    avatar: '落',
+    likes: 3890,
+    saves: 1456,
+    category: 'color',
+    tags: ['品牌', '暖色'],
+    palette: ['#FF9A76', '#FEC89A', '#FAD2E1', '#FFF1E6', '#FFE8D6']
+  },
+  {
+    id: 14,
+    title: '像素艺术 — 复古 8-bit 游戏素材',
+    image: 'https://images.unsplash.com/photo-1552820728-8b83bb6b2b25?w=600&h=700&fit=crop',
+    author: '像素工匠',
+    avatar: '像',
+    likes: 5678,
+    saves: 2345,
+    category: 'illust',
+    tags: ['像素', '游戏', '复古'],
+    palette: ['#2D2D2D', '#5C4B51', '#8CBEB2', '#F2EBBF', '#F3B562']
+  },
+  {
+    id: 15,
+    title: '无衬线精选 — 10 组现代网页字体搭配',
+    image: 'https://images.unsplash.com/photo-1455390582262-044cdead277a?w=600&h=450&fit=crop',
+    author: '排版研究所',
+    avatar: '排',
+    likes: 1234,
+    saves: 432,
+    category: 'font',
+    tags: ['无衬线', '网页', '字体'],
+    palette: ['#222222', '#444444', '#888888', '#CCCCCC', '#F9F9F9']
+  },
+  {
+    id: 16,
+    title: '梦幻紫调 — 渐变背景素材合集',
+    image: 'https://images.unsplash.com/photo-1557682250-33bd709cbe85?w=600&h=800&fit=crop',
+    author: '紫色幻想',
+    avatar: '紫',
+    likes: 4567,
+    saves: 1890,
+    category: 'material',
+    tags: ['渐变', '背景', '紫色'],
+    palette: ['#7B2D8E', '#9B59B6', '#BB8FCE', '#D2B4DE', '#E8DAEF']
+  },
+  {
+    id: 17,
+    title: '企业蓝调 — 商务 UI 配色规范',
+    image: 'https://images.unsplash.com/photo-1579546929518-9e396f3cc809?w=600&h=600&fit=crop',
+    author: '商务设计局',
+    avatar: '商',
+    likes: 2100,
+    saves: 876,
+    category: 'color',
+    tags: ['企业', '商务', '配色'],
+    palette: ['#0D47A1', '#1565C0', '#1976D2', '#42A5F5', '#BBDEFB']
+  },
+  {
+    id: 18,
+    title: '自然肌理 — 纸张与织物纹理素材',
+    image: 'https://images.unsplash.com/photo-1558618666-fcd25c85f82e?w=600&h=750&fit=crop',
+    author: '纹理采集师',
+    avatar: '纹',
+    likes: 3456,
+    saves: 1234,
+    category: 'material',
+    tags: ['纹理', '纸张', '自然'],
+    palette: ['#D4C5B9', '#C4B5A5', '#B8A898', '#A89888', '#988878']
+  },
+  {
+    id: 19,
+    title: 'Candy Pop — 糖果色图标系统',
+    image: 'https://images.unsplash.com/photo-1553356084-58ef4a67b2a7?w=600&h=650&fit=crop',
+    author: '糖果工厂',
+    avatar: '糖',
+    likes: 6789,
+    saves: 2890,
+    category: 'illust',
+    tags: ['糖果', '图标', '可爱'],
+    palette: ['#FF6B6B', '#FFE66D', '#4ECDC4', '#A8E6CF', '#FF8B94']
+  },
+  {
+    id: 20,
+    title: '暗黑主题 — Dashboard 深色 UI 套件',
+    image: 'https://images.unsplash.com/photo-1550684376-efcbd6e3f031?w=600&h=800&fit=crop',
+    author: '暗夜设计',
+    avatar: '暗',
+    likes: 4321,
+    saves: 1876,
+    category: 'ui',
+    tags: ['深色', '仪表盘', 'UI'],
+    palette: ['#0D1117', '#161B22', '#21262D', '#30363D', '#8B949E']
+  },
+  {
+    id: 21,
+    title: '水彩晕染 — 柔和艺术感配色组合',
+    image: 'https://images.unsplash.com/photo-1549490349-8643362247b5?w=600&h=900&fit=crop',
+    author: '水彩画室',
+    avatar: '水',
+    likes: 2789,
+    saves: 1023,
+    category: 'color',
+    tags: ['水彩', '艺术', '柔和'],
+    palette: ['#F4A7B9', '#E8C3B9', '#C9D6C7', '#A3C4C9', '#F0E5D8']
+  },
+  {
+    id: 22,
+    title: '科技蓝紫 — 数据可视化配色',
+    image: 'https://images.unsplash.com/photo-1551288049-bebda4e38f71?w=600&h=700&fit=crop',
+    author: '数据之美',
+    avatar: '数',
+    likes: 1567,
+    saves: 543,
+    category: 'color',
+    tags: ['数据', '科技', '可视化'],
+    palette: ['#1B1B3A', '#3B1F6E', '#6C63FF', '#A29BFE', '#DFE6E9']
+  },
+  {
+    id: 23,
+    title: '日式排版 — 和风字体搭配指南',
+    image: 'https://images.unsplash.com/photo-1558618666-fcd25c85f82e?w=600&h=500&fit=crop',
+    author: '和风印社',
+    avatar: '和',
+    likes: 1890,
+    saves: 678,
+    category: 'font',
+    tags: ['日式', '排版', '和风'],
+    palette: ['#2C1810', '#5C3D2E', '#8B6914', '#D4A574', '#F5E6D3']
+  },
+  {
+    id: 24,
+    title: '扁平插画 — 100+ 人物场景素材',
+    image: 'https://images.unsplash.com/photo-1544866092-0275ef005dd6?w=600&h=750&fit=crop',
+    author: '扁平世界',
+    avatar: '扁',
+    likes: 5123,
+    saves: 2100,
+    category: 'illust',
+    tags: ['扁平', '人物', '场景'],
+    palette: ['#2D3436', '#636E72', '#FDCB6E', '#E17055', '#00B894']
+  }
+];
+
+/* ═══════════════════════════════════════════════
+   State
+   ═══════════════════════════════════════════════ */
+
+let activeCategory = 'all';
+let activeSort = 'popular';
+let searchQuery = '';
+let savedIds = new Set([1, 5, 10, 19]); // Pre-saved items
+
+/* ═══════════════════════════════════════════════
+   Render
+   ═══════════════════════════════════════════════ */
+
+function getFilteredAssets() {
+  let result = [...ASSETS];
+
+  if (activeCategory !== 'all') {
+    result = result.filter(a => a.category === activeCategory);
+  }
+
+  if (searchQuery.trim()) {
+    const q = searchQuery.trim().toLowerCase();
+    result = result.filter(a =>
+      a.title.toLowerCase().includes(q) ||
+      a.tags.some(t => t.toLowerCase().includes(q)) ||
+      a.author.toLowerCase().includes(q)
+    );
+  }
+
+  switch (activeSort) {
+    case 'newest':
+      result.sort((a, b) => b.id - a.id);
+      break;
+    case 'trending':
+      result.sort((a, b) => (b.likes + b.saves) - (a.likes + a.saves));
+      break;
+    case 'popular':
+    default:
+      result.sort((a, b) => b.likes - a.likes);
+      break;
+  }
+
+  return result;
+}
+
+function renderAssetCard(asset) {
+  const isSaved = savedIds.has(asset.id);
+  return `
+    <article class="asset-card" data-id="${asset.id}" onclick="openDetail(${asset.id})">
+      <div class="card-image-wrap">
+        <img src="${asset.image}" alt="${asset.title}" loading="lazy" onerror="this.src='data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 width=%22600%22 height=%22400%22><rect fill=%22%23f0ebe6%22 width=%22600%22 height=%22400%22/><text x=%22300%22 y=%22210%22 text-anchor=%22middle%22 fill=%22%23b8afa9%22 font-family=%22sans-serif%22 font-size=%2216%22>🖼 图片加载中</text></svg>'">
+        <button class="card-save ${isSaved ? 'saved' : ''}" onclick="event.stopPropagation(); toggleSave(${asset.id})" title="${isSaved ? '取消收藏' : '收藏'}">
+          ${isSaved ? '❤️' : '🤍'}
+        </button>
+      </div>
+      ${asset.palette ? `
+      <div class="card-palette">
+        ${asset.palette.map(c => `<span class="swatch" style="background:${c}"></span>`).join('')}
+      </div>` : ''}
+      <div class="card-body">
+        <h3 class="card-title">${asset.title}</h3>
+        <div class="card-meta">
+          <span class="meta-author">
+            <span class="card-author-avatar">${asset.avatar}</span>
+            ${asset.author}
+          </span>
+          <span class="card-stats">
+            <span>❤️ ${formatNumber(asset.likes)}</span>
+            <span>💾 ${formatNumber(asset.saves)}</span>
+          </span>
+        </div>
+        <div class="card-tag-row">
+          ${asset.tags.map(t => {
+            const tagClass = 'tag-' + asset.category;
+            return `<span class="card-tag ${tagClass}">${t}</span>`;
+          }).join('')}
+        </div>
+      </div>
+    </article>
+  `;
+}
+
+function renderAll() {
+  const grid = document.getElementById('masonryGrid');
+  const empty = document.getElementById('emptyState');
+  const stats = document.getElementById('statsCount');
+
+  const filtered = getFilteredAssets();
+
+  if (filtered.length === 0) {
+    grid.innerHTML = '';
+    empty.classList.add('visible');
+    stats.innerHTML = '共 <strong>0</strong> 个素材';
+  } else {
+    empty.classList.remove('visible');
+    stats.innerHTML = `共 <strong>${filtered.length}</strong> 个素材`;
+    grid.innerHTML = filtered.map(renderAssetCard).join('');
+  }
+}
+
+/* ═══════════════════════════════════════════════
+   Interactions
+   ═══════════════════════════════════════════════ */
+
+function toggleSave(id) {
+  if (savedIds.has(id)) {
+    savedIds.delete(id);
+    showToast('已取消收藏');
+  } else {
+    savedIds.add(id);
+    showToast('已添加到收藏夹 ❤️');
+  }
+  renderAll();
+}
+
+/* ── Category filter ── */
+document.getElementById('categoryBar').addEventListener('click', (e) => {
+  const chip = e.target.closest('.cat-chip');
+  if (!chip) return;
+
+  document.querySelectorAll('.cat-chip').forEach(c => c.classList.remove('active'));
+  chip.classList.add('active');
+  activeCategory = chip.dataset.cat;
+  renderAll();
+});
+
+/* ── Sort ── */
+document.querySelector('.stats-bar').addEventListener('click', (e) => {
+  const btn = e.target.closest('.sort-btn');
+  if (!btn) return;
+
+  document.querySelectorAll('.sort-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  activeSort = btn.dataset.sort;
+  renderAll();
+});
+
+/* ── Search ── */
+const searchInput = document.getElementById('searchInput');
+let searchTimeout;
+searchInput.addEventListener('input', () => {
+  clearTimeout(searchTimeout);
+  searchTimeout = setTimeout(() => {
+    searchQuery = searchInput.value;
+    renderAll();
+  }, 250);
+});
+
+/* ── Modal ── */
+function openDetail(id) {
+  const asset = ASSETS.find(a => a.id === id);
+  if (!asset) return;
+
+  const modalInner = document.getElementById('modalInner');
+  modalInner.innerHTML = `
+    <img class="modal-image" src="${asset.image}" alt="${asset.title}" onerror="this.style.display='none'">
+    <div class="modal-body">
+      <h2>${asset.title}</h2>
+      <div class="modal-meta">
+        <span>👤 ${asset.author}</span>
+        <span>❤️ ${formatNumber(asset.likes)} 喜欢</span>
+        <span>💾 ${formatNumber(asset.saves)} 收藏</span>
+      </div>
+      ${asset.palette ? `
+      <div class="modal-palette">
+        ${asset.palette.map(c => `
+          <div class="swatch-block" style="background:${c}" onclick="copyHex('${c}')" title="点击复制 ${c}">
+            <span class="hex-label">${c}</span>
+          </div>
+        `).join('')}
+      </div>
+      <p style="font-size:var(--text-sm);color:var(--warm-500);text-align:center;">💡 点击色块可复制色号</p>
+      ` : ''}
+      <div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:16px;">
+        ${asset.tags.map(t => {
+          const tagClass = 'tag-' + asset.category;
+          return `<span class="card-tag ${tagClass}" style="font-size:13px;padding:6px 14px;">${t}</span>`;
+        }).join('')}
+      </div>
+    </div>
+  `;
+
+  document.getElementById('modalOverlay').classList.add('open');
+  document.body.style.overflow = 'hidden';
+}
+
+function closeModal(e) {
+  if (e && e.target !== document.getElementById('modalOverlay')) return;
+  document.getElementById('modalOverlay').classList.remove('open');
+  document.body.style.overflow = '';
+}
+
+document.addEventListener('keydown', (e) => {
+  if (e.key === 'Escape') closeModal();
+});
+
+/* ── Toast ── */
+let toastTimer;
+function showToast(msg) {
+  const toast = document.getElementById('toast');
+  toast.textContent = msg;
+  toast.classList.add('show');
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(() => toast.classList.remove('show'), 2000);
+}
+
+/* ── Copy hex ── */
+function copyHex(hex) {
+  navigator.clipboard.writeText(hex).then(() => {
+    showToast(`已复制 ${hex} 📋`);
+  }).catch(() => {
+    showToast('复制失败，请手动选择');
+  });
+}
+
+/* ── Helpers ── */
+function formatNumber(n) {
+  if (n >= 1000) return (n / 1000).toFixed(1).replace(/\.0$/, '') + 'k';
+  return String(n);
+}
+
+/* ═══════════════════════════════════════════════
+   Init
+   ═══════════════════════════════════════════════ */
+
+renderAll();
+
+console.log('%c🎨 PaletteHub %c· 发现灵感色卡',
+  'font-size:18px;font-weight:700;color:#FF7A5C;',
+  'font-size:14px;color:#6B615A;');
+console.log('%c设计师，你好！试试点击卡片查看详情，或点击色块复制色号 👋',
+  'font-size:12px;color:#8C827B;');
+</script>
+
+</body>
+</html>
