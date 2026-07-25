@@ -919,9 +919,9 @@ input, select { font: inherit; }
   </div>
 
   <div class="header-actions">
-    <button class="btn btn-ghost">浏览</button>
-    <button class="btn btn-ghost">收藏</button>
-    <button class="btn btn-primary" onclick="showToast('发布功能即将上线 ✨')">发布素材</button>
+    <button class="btn btn-ghost" id="btnBrowse" onclick="scrollToGallery()">浏览</button>
+    <button class="btn btn-ghost" id="btnSaved" onclick="toggleSavedFilter()">收藏 <span id="savedCount" style="background:var(--primary-100);color:var(--primary-600);padding:1px 7px;border-radius:10px;font-size:11px;display:none;">0</span></button>
+    <button class="btn btn-primary" id="btnPublish" onclick="openPublishForm()">发布素材</button>
   </div>
 </header>
 
@@ -977,6 +977,62 @@ input, select { font: inherit; }
   <div class="modal" id="modalContent" onclick="event.stopPropagation()">
     <button class="modal-close" onclick="closeModal()">✕</button>
     <div id="modalInner"></div>
+  </div>
+</div>
+
+<!-- ═══════════════ PUBLISH MODAL ═══════════════ -->
+<div class="modal-overlay" id="publishOverlay" onclick="closePublish(event)">
+  <div class="modal" style="max-width:560px;" onclick="event.stopPropagation()">
+    <button class="modal-close" onclick="closePublish()">✕</button>
+    <div style="padding:var(--space-8);">
+      <h2 style="font-family:var(--font-display);font-size:var(--text-2xl);font-weight:700;color:var(--warm-800);margin-bottom:var(--space-6);">✨ 发布新素材</h2>
+      <form id="publishForm" onsubmit="handlePublish(event)" style="display:flex;flex-direction:column;gap:var(--space-5);">
+        <div>
+          <label style="font-family:var(--font-display);font-size:var(--text-sm);font-weight:600;color:var(--warm-600);display:block;margin-bottom:var(--space-1);">素材名称 *</label>
+          <input type="text" id="pubTitle" required placeholder="给你的色卡取个名字…" style="width:100%;padding:12px 16px;border:1.5px solid var(--warm-300);border-radius:var(--radius-md);font-size:var(--text-base);font-family:var(--font-body);outline:none;transition:border-color var(--duration-fast);" onfocus="this.style.borderColor='var(--primary-400)';this.style.boxShadow='0 0 0 3px rgba(255,122,92,0.12)'" onblur="this.style.borderColor='var(--warm-300)';this.style.boxShadow='none'">
+        </div>
+        <div>
+          <label style="font-family:var(--font-display);font-size:var(--text-sm);font-weight:600;color:var(--warm-600);display:block;margin-bottom:var(--space-1);">作者名称</label>
+          <input type="text" id="pubAuthor" placeholder="你的名字" style="width:100%;padding:12px 16px;border:1.5px solid var(--warm-300);border-radius:var(--radius-md);font-size:var(--text-base);font-family:var(--font-body);outline:none;transition:border-color var(--duration-fast);" onfocus="this.style.borderColor='var(--primary-400)';this.style.boxShadow='0 0 0 3px rgba(255,122,92,0.12)'" onblur="this.style.borderColor='var(--warm-300)';this.style.boxShadow='none'">
+        </div>
+        <div>
+          <label style="font-family:var(--font-display);font-size:var(--text-sm);font-weight:600;color:var(--warm-600);display:block;margin-bottom:var(--space-1);">色号 1 *</label>
+          <div style="display:flex;gap:var(--space-2);">
+            <input type="color" id="pubC1" value="#FF7A5C" style="width:44px;height:44px;border:none;border-radius:var(--radius-md);cursor:pointer;">
+            <input type="text" id="pubC1Hex" value="#FF7A5C" placeholder="#FF7A5C" style="flex:1;padding:12px;border:1.5px solid var(--warm-300);border-radius:var(--radius-md);font-family:var(--font-mono);font-size:var(--text-sm);outline:none;" oninput="document.getElementById('pubC1').value=this.value" onfocus="this.style.borderColor='var(--primary-400)'" onblur="this.style.borderColor='var(--warm-300)'">
+          </div>
+        </div>
+        <div style="display:flex;gap:var(--space-3);">
+          <div style="flex:1;">
+            <label style="font-family:var(--font-display);font-size:var(--text-sm);font-weight:600;color:var(--warm-600);display:block;margin-bottom:var(--space-1);">色号 2</label>
+            <input type="text" id="pubC2" value="#F7931E" placeholder="#HEX" style="width:100%;padding:10px;border:1.5px solid var(--warm-300);border-radius:var(--radius-md);font-family:var(--font-mono);font-size:var(--text-sm);outline:none;" onfocus="this.style.borderColor='var(--primary-400)'" onblur="this.style.borderColor='var(--warm-300)'">
+          </div>
+          <div style="flex:1;">
+            <label style="font-family:var(--font-display);font-size:var(--text-sm);font-weight:600;color:var(--warm-600);display:block;margin-bottom:var(--space-1);">色号 3</label>
+            <input type="text" id="pubC3" value="#FDC830" placeholder="#HEX" style="width:100%;padding:10px;border:1.5px solid var(--warm-300);border-radius:var(--radius-md);font-family:var(--font-mono);font-size:var(--text-sm);outline:none;" onfocus="this.style.borderColor='var(--primary-400)'" onblur="this.style.borderColor='var(--warm-300)'">
+          </div>
+        </div>
+        <div style="display:flex;gap:var(--space-3);">
+          <div style="flex:1;">
+            <label style="font-family:var(--font-display);font-size:var(--text-sm);font-weight:600;color:var(--warm-600);display:block;margin-bottom:var(--space-1);">色号 4</label>
+            <input type="text" id="pubC4" value="#FFE259" placeholder="#HEX" style="width:100%;padding:10px;border:1.5px solid var(--warm-300);border-radius:var(--radius-md);font-family:var(--font-mono);font-size:var(--text-sm);outline:none;" onfocus="this.style.borderColor='var(--primary-400)'" onblur="this.style.borderColor='var(--warm-300)'">
+          </div>
+          <div style="flex:1;">
+            <label style="font-family:var(--font-display);font-size:var(--text-sm);font-weight:600;color:var(--warm-600);display:block;margin-bottom:var(--space-1);">色号 5</label>
+            <input type="text" id="pubC5" value="#FFF3CD" placeholder="#HEX" style="width:100%;padding:10px;border:1.5px solid var(--warm-300);border-radius:var(--radius-md);font-family:var(--font-mono);font-size:var(--text-sm);outline:none;" onfocus="this.style.borderColor='var(--primary-400)'" onblur="this.style.borderColor='var(--warm-300)'">
+          </div>
+        </div>
+        <div id="pubPreview" style="height:60px;border-radius:var(--radius-md);margin-top:var(--space-2);"></div>
+        <div>
+          <label style="font-family:var(--font-display);font-size:var(--text-sm);font-weight:600;color:var(--warm-600);display:block;margin-bottom:var(--space-1);">标签（逗号分隔）</label>
+          <input type="text" id="pubTags" placeholder="如：配色,渐变,温暖" style="width:100%;padding:12px 16px;border:1.5px solid var(--warm-300);border-radius:var(--radius-md);font-size:var(--text-base);font-family:var(--font-body);outline:none;" onfocus="this.style.borderColor='var(--primary-400)'" onblur="this.style.borderColor='var(--warm-300)'">
+        </div>
+        <div style="display:flex;gap:var(--space-3);margin-top:var(--space-2);">
+          <button type="button" class="btn btn-ghost" onclick="closePublish()" style="flex:1;">取消</button>
+          <button type="submit" class="btn btn-primary" style="flex:1;">✨ 发布</button>
+        </div>
+      </form>
+    </div>
   </div>
 </div>
 
@@ -3375,6 +3431,22 @@ let activeCategory = 'all';
 let activeSort = 'popular';
 let searchQuery = '';
 let savedIds = new Set([1, 5, 10, 19]); // Pre-saved items
+let showingSaved = false;
+
+function updateSavedBadge() {
+  var el = document.getElementById('savedCount');
+  var btn = document.getElementById('btnSaved');
+  var n = savedIds.size;
+  if (n > 0 && !showingSaved) {
+    el.style.display = 'inline'; el.textContent = n;
+    btn.style.fontWeight = '600';
+  } else if (showingSaved) {
+    el.style.display = 'none';
+    btn.style.fontWeight = '700'; btn.style.color = 'var(--primary-600)';
+  } else {
+    el.style.display = 'none'; btn.style.fontWeight = '500'; btn.style.color = 'var(--warm-600)';
+  }
+}
 
 /* ═══════════════════════════════════════════════
    Render
@@ -3407,6 +3479,10 @@ function getFilteredAssets() {
     default:
       result.sort((a, b) => b.likes - a.likes);
       break;
+  }
+
+  if (showingSaved) {
+    result = result.filter(function(a) { return savedIds.has(a.id); });
   }
 
   return result;
@@ -3459,12 +3535,21 @@ function renderAll() {
   if (filtered.length === 0) {
     grid.innerHTML = '';
     empty.classList.add('visible');
-    stats.innerHTML = '共 <strong>0</strong> 个素材';
+    if (showingSaved) {
+      stats.innerHTML = '收藏夹为空，快去收藏喜欢的色卡吧 ❤️';
+    } else {
+      stats.innerHTML = '共 <strong>0</strong> 个素材';
+    }
   } else {
     empty.classList.remove('visible');
-    stats.innerHTML = `共 <strong>${filtered.length}</strong> 个素材`;
+    if (showingSaved) {
+      stats.innerHTML = '收藏夹 · 共 <strong>' + filtered.length + '</strong> 个';
+    } else {
+      stats.innerHTML = '共 <strong>' + filtered.length + '</strong> 个素材';
+    }
     grid.innerHTML = filtered.map(renderAssetCard).join('');
   }
+  updateSavedBadge();
 }
 
 /* ═══════════════════════════════════════════════
@@ -3479,7 +3564,103 @@ function toggleSave(id) {
     savedIds.add(id);
     showToast('已添加到收藏夹 ❤️');
   }
+  updateSavedBadge();
+  if (showingSaved) { renderAll(); }
+  else { renderAll(); }
+}
+
+/* ── Scroll to gallery ── */
+function scrollToGallery() {
+  document.getElementById('masonryGrid').scrollIntoView({ behavior: 'smooth' });
+  showToast('向下滚动浏览所有素材 👇');
+}
+
+/* ── Saved filter toggle ── */
+function toggleSavedFilter() {
+  showingSaved = !showingSaved;
+  var btn = document.getElementById('btnSaved');
+  if (showingSaved) {
+    btn.style.background = 'var(--primary-100)';
+    btn.style.color = 'var(--primary-600)';
+    showToast('显示收藏的 ' + savedIds.size + ' 个素材 ❤️');
+  } else {
+    btn.style.background = 'transparent';
+    btn.style.color = 'var(--warm-600)';
+    showToast('显示全部素材');
+  }
+  updateSavedBadge();
   renderAll();
+}
+
+/* ── Publish form ── */
+function openPublishForm() {
+  document.getElementById('publishOverlay').classList.add('open');
+  document.body.style.overflow = 'hidden';
+  updatePublishPreview();
+}
+function closePublish(e) {
+  if (e && e.target !== document.getElementById('publishOverlay')) return;
+  document.getElementById('publishOverlay').classList.remove('open');
+  document.body.style.overflow = '';
+}
+function updatePublishPreview() {
+  var c1 = document.getElementById('pubC1Hex').value;
+  var c2 = document.getElementById('pubC2').value;
+  var c3 = document.getElementById('pubC3').value;
+  var c4 = document.getElementById('pubC4').value;
+  var c5 = document.getElementById('pubC5').value;
+  document.getElementById('pubPreview').style.background = 'linear-gradient(135deg,'+c1+','+c2+','+c3+','+c4+','+c5+')';
+}
+document.getElementById('pubC1Hex').addEventListener('input', updatePublishPreview);
+['pubC2','pubC3','pubC4','pubC5'].forEach(function(id) {
+  document.getElementById(id).addEventListener('input', updatePublishPreview);
+});
+document.getElementById('pubC1').addEventListener('input', function() {
+  document.getElementById('pubC1Hex').value = this.value;
+  updatePublishPreview();
+});
+
+function handlePublish(e) {
+  e.preventDefault();
+  var title = document.getElementById('pubTitle').value.trim();
+  var author = document.getElementById('pubAuthor').value.trim() || '匿名创作者';
+  var tags = document.getElementById('pubTags').value.split(',').map(function(t){return t.trim();}).filter(Boolean);
+  if (tags.length === 0) tags = ['配色'];
+  var palette = [
+    document.getElementById('pubC1Hex').value,
+    document.getElementById('pubC2').value,
+    document.getElementById('pubC3').value,
+    document.getElementById('pubC4').value,
+    document.getElementById('pubC5').value
+  ];
+  var newId = ASSETS.length + 1;
+  var svgColors = palette;
+  var stops = '';
+  for (var i=0; i<svgColors.length; i++) {
+    stops += '<stop offset="'+(i/(svgColors.length-1)*100)+'%" stop-color="'+svgColors[i]+'"/>';
+  }
+  var svg = '<svg xmlns="http://www.w3.org/2000/svg" width="600" height="450" viewBox="0 0 600 450"><defs><linearGradient id="g" x1="0%" y1="0%" x2="100%" y2="100%">'+stops+'</linearGradient></defs><rect width="600" height="450" fill="url(#g)"/></svg>';
+  var b64 = btoa(svg);
+  ASSETS.push({
+    id: newId,
+    title: title + ' — 自定义配色',
+    image: 'data:image/svg+xml;base64,'+b64,
+    author: author,
+    avatar: author.charAt(0),
+    likes: 0,
+    saves: 0,
+    category: 'color',
+    tags: tags,
+    palette: palette
+  });
+  document.getElementById('publishOverlay').classList.remove('open');
+  document.body.style.overflow = '';
+  showToast('🎉 发布成功！你的色卡已加入素材库');
+  renderAll();
+  document.getElementById('publishForm').reset();
+  document.getElementById('pubC1Hex').value = '#FF7A5C';
+  document.getElementById('pubC1').value = '#FF7A5C';
+  updatePublishPreview();
 }
 
 /* ── Category filter ── */
@@ -3600,6 +3781,7 @@ function formatNumber(n) {
    ═══════════════════════════════════════════════ */
 
 renderAll();
+updateSavedBadge();
 
 console.log('%c🎨 PaletteHub %c· 发现灵感色卡',
   'font-size:18px;font-weight:700;color:#FF7A5C;',
